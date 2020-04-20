@@ -13,22 +13,22 @@ layers['full'] = {}
 layers['left'] = {}
 layers['right'] = {}
 layers['hold'] = parse_table("""
- | RST  |      |      |      |      |      |      |      |      | RST  |
- | LCTL | LGUI | LALT | LSFT |      |      | LSFT | LALT | LGUI | LCTL |
- |      | ALGR |      |      |      |      |      |      | ALGR | RCTL |
- |      |      |mouse | nav  |media | fun  | num  | sym  |      |      |
+     | RST  |      |      |      |      |      |      |      |      | RST  |
+LCTL | LCTL | LGUI | LALT | LSFT |      |      | LSFT | LALT | LGUI | LCTL |
+     |      | ALGR |      |      |      |      |      |      | ALGR | RCTL |
+     |      |      |mouse | nav  |media | fun  | num  | sym  |      |      |
 """)
 
 layers['full']['colemak'] = parse_table("""
-ESC  |  Q    | W    | F    | P    | B    | J    | L    | U    | Y    | '   | BSPC
-TAB  |  A    | R    | S    | T    | G    | M    | N    | E    | I    | O   | ;
+TAB  |  Q    | W    | F    | P    | B    | J    | L    | U    | Y    | '   | BSPC
+ESC  |  A    | R    | S    | T    | G    | M    | N    | E    | I    | O   | ;
 LSFT |  Z    | X    | C    | D    | V    | K    | H    | ,    | .    | /   | \\
 NP   |qwerty |      | TAB  | ENT  | ESC  | DEL  | SPC  | BSPC |      |     | NP
 """)
 
 layers['full']['qwerty'] = parse_table("""
-ESC  |  Q    | W    | E    | R    | T    | Y    | U    | I    | O   | P   | BSPC
-TAB  |  A    | S    | D    | F    | G    | H    | J    | K    | L   | '   | ;
+TAB  |  Q    | W    | E    | R    | T    | Y    | U    | I    | O   | P   | BSPC
+ESC  |  A    | S    | D    | F    | G    | H    | J    | K    | L   | '   | ;
 LSFT |  Z    | X    | C    | V    | B    | N    | M    | ,    | .   | /   | \\
 NP   |colemak|      | TAB  | ENT  | ESC  | DEL  | SPC  | BSPC |     |     | NP
 """)
