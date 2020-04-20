@@ -55,7 +55,7 @@ enum custom_keycodes {
 // #define OK_L    KC_L
 // #define OK_SCLN KC_SCLN
 
-// #define OK_CTRL MT(MOD_LCTL, KC_ESC)
+#define OK_ESC MT(MOD_LCTL, KC_ESC)
 // #define OK_GENT MT(MOD_LGUI, KC_ENT) /* gui enter */
 // #define OK_SPNUM LT(NUMBERS, KC_SPC) /* space numbers */
 // #define OK_BKFM LT(F_MOVE, KC_BSPC) /* backspace f-move */
@@ -83,13 +83,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                        `----------------------------------'  `----------------------------------'
  */
     [QWERTY] = LAYOUT(
-      KC_ESC,  KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,                                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
-      KC_TAB,  OK_A,   OK_S,   OK_D,   OK_F,   KC_G,                                         KC_H,    OK_J,    OK_K,    OK_L,    OK_SCLN, KC_QUOT,
+      KC_TAB,  KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,                                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
+      OK_ESC,  OK_A,   OK_S,   OK_D,   OK_F,   KC_G,                                         KC_H,    OK_J,    OK_K,    OK_L,    OK_SCLN, KC_QUOT,
       KC_LSFT, KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,   KC_LSFT,   KC_LSFT, KC_LSFT, KC_LSFT, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_BSLS,
                             _______, KC_DEL  , OK_ENNUM, OK_SPMOV,  OK_SPMOV, OK_ENNUM, OK_ENNUM, OK_SPMOV, KC_RCTL, _______
     ),
 /*
- * Numbers: numbers, specials-_  |  =+  |  [{  |  ]} 
+ * Numbers: numbers, specials-_  |  =+  |  [{  |  ]}
  *
  * ,-------------------------------------------.                              ,-------------------------------------------.
  * |    ~   |  !   |  @   |  #   |  $   |  %   |                              |  ^   |  &   |  *   |  (   |  )   |  _     |
