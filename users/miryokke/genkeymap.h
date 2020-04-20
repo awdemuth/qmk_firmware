@@ -1,0 +1,2 @@
+
+enum layers {COLEMAK, QWERTY, NUM, SYM, FUN, NAV, MOUSE, MEDIA};
