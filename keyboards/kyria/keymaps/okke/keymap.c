@@ -20,8 +20,9 @@ uint16_t copy_paste_timer;
 
 enum layers {
     QWERTY = 0,
+    COLEMAK,
     NUMBERS,
-    F_MOVE
+    MOVE
 };
 
 enum custom_keycodes {
@@ -37,6 +38,16 @@ enum custom_keycodes {
 #define OK_L    MT(MOD_RGUI, KC_L)
 #define OK_SCLN    MT(MOD_RCTL, KC_SCLN)
 
+
+#define CM_A    MT(MOD_LCTL, KC_A)
+#define CM_R    MT(MOD_LGUI, KC_R)
+#define CM_S    MT(MOD_LALT, KC_S)
+#define CM_T    MT(MOD_LSFT, KC_T)
+#define CM_N    MT(MOD_RSFT, KC_N)
+#define CM_E    MT(MOD_LALT, KC_E)
+#define CM_I    MT(MOD_LGUI, KC_I)
+#define CM_O    MT(MOD_LCTL, KC_O)
+
 #define OK_GRV  MT(MOD_LCTL, KC_GRV)
 #define OK_1    MT(MOD_LCTL, KC_1)
 #define OK_2    MT(MOD_LGUI, KC_2)
@@ -46,25 +57,32 @@ enum custom_keycodes {
 #define OK_8    MT(MOD_LALT, KC_8)
 #define OK_9    MT(MOD_LGUI, KC_9)
 #define OK_0    MT(MOD_LCTL, KC_0)
-// #define OK_A    KC_A
-// #define OK_S    KC_S
-// #define OK_D    KC_D
-// #define OK_F    KC_F
-// #define OK_J    KC_J
-// #define OK_K    KC_K
-// #define OK_L    KC_L
-// #define OK_SCLN KC_SCLN
+
+#define OK_F5   MT(MOD_LCTL, KC_F5)
+#define OK_F6   MT(MOD_LGUI, KC_F6)
+#define OK_F7   MT(MOD_LALT, KC_F7)
+#define OK_F8   MT(MOD_LSFT, KC_F8)
 
 #define OK_ESC MT(MOD_LCTL, KC_ESC)
+#define OK_TAB MT(MOD_LCTL, KC_TAB)
 // #define OK_GENT MT(MOD_LGUI, KC_ENT) /* gui enter */
 // #define OK_SPNUM LT(NUMBERS, KC_SPC) /* space numbers */
-// #define OK_BKFM LT(F_MOVE, KC_BSPC) /* backspace f-move */
-// #define OK_DLFM LT(F_MOVE, KC_DEL) /* del f-move */
+// #define OK_BKFM LT(MOVE, KC_BSPC) /* backspace f-move */
+// #define OK_DLFM LT(MOVE, KC_DEL) /* del f-move */
 // #define OK_AENT MT(MOD_RALT, KC_ENT) /* alt enter */
 #define OK_ENNUM LT(NUMBERS, KC_ENT) /* enter numbers */
-#define OK_SPMOV LT(F_MOVE, KC_SPC) /* space numbers */
-// #define OK_F_MOVE TT(F_MOVE)
-// #define OK_NUMBERS TT(NUMBERS)
+#define OK_SPMOV LT(MOVE, KC_SPC) /* space numbers */
+#define OK_NUM MO(NUMBERS)
+#define OK_MOV MO(MOVE)
+#define OK_QWE TO(QWERTY)
+#define OK_COL TO(COLEMAK)
+
+#define TAB_MOV LT(MOVE, KC_TAB)
+#define SP_NUM LT(NUMBERS, KC_SPC)
+#define EN_MOV LT(MOVE, KC_ENT)
+#define DEL_MOV LT(MOVE, KC_DEL)
+#define BSP_NUM LT(NUMBERS, KC_BSPC)
+#define ESC_MOV LT(MOVE, KC_ESC)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /*
@@ -74,40 +92,58 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * | esc    |   Q  |   W  |   E  |   R  |   T  |                              |   Y  |   U  |   I  |   O  |   P  |  Bspc  |
  * |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
  * | tab    |   A  |   S  |  D   |   F  |   G  |                              |   H  |   J  |   K  |   L  | ;  : |  ' "   |
- * |        |  ctrl|  gui | alt  | shift|      |                              |      | shift| alt  |  gui | ctrl |        |
+ * | ctrl   |  ctrl|  gui | alt  | shift|      |                              |      | shift| alt  |  gui | ctrl |        |
  * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
  * | shift  |   Z  |   X  |   C  |   V  |   B  |      |      |  |      |      |   N  |   M  | ,  < | . >  | /  ? |  \ |   |
  * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
- *                        |      | del  | enter|space |      |  |      |enter |space |      |      |
- *                        |      |      | nmbrs|f-move|      |  |      |nmbrs |f-move| rctrl|      |
- *                        `----------------------------------'  `----------------------------------'
+ *                        | COLE |      | tab  | spc  | ent  |  | del  | bspc | esc  |      |      |
+ *                        | QWER |      | move | numb | move |  | move | numb | move |      |      |
+ *                        `------`----------------------------  ----------------------------'------'
  */
     [QWERTY] = LAYOUT(
-      KC_TAB,  KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,                                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
-      OK_ESC,  OK_A,   OK_S,   OK_D,   OK_F,   KC_G,                                         KC_H,    OK_J,    OK_K,    OK_L,    OK_SCLN, KC_QUOT,
-      KC_LSFT, KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,   KC_LSFT,   KC_LSFT, KC_LSFT, KC_LSFT, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_BSLS,
-                            _______, KC_DEL  , OK_ENNUM, OK_SPMOV,  OK_SPMOV, OK_ENNUM, OK_ENNUM, OK_SPMOV, KC_RCTL, _______
+      KC_ESC,  KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,                                       KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
+      OK_TAB,  OK_A,   OK_S,   OK_D,   OK_F,   KC_G,                                       KC_H,    OK_J,    OK_K,    OK_L,    OK_SCLN, KC_QUOT,
+      KC_LSFT, KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,   KC_LSFT, KC_LSFT, KC_LSFT, KC_LSFT, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_BSLS,
+                             OK_COL,   KC_NO,  OK_TAB, SP_NUM,  EN_MOV,  DEL_MOV, BSP_NUM, KC_ESC,  KC_NO, KC_NO
     ),
+    [COLEMAK] = LAYOUT(
+      KC_ESC,  KC_Q,   KC_W,   KC_F,   KC_P,   KC_B,                                       KC_J,    KC_L,    KC_U,    KC_Y,    KC_QUOT, KC_BSPC,
+      OK_TAB,  CM_A,   CM_R,   CM_S,   CM_T,   KC_G,                                       KC_M,    CM_N,    CM_E,    CM_I,    CM_O,    KC_SCLN,
+      KC_LSFT, KC_Z,   KC_X,   KC_C,   KC_D,   KC_V,   KC_LSFT, KC_LSFT, KC_LSFT, KC_LSFT, KC_K,    KC_H,    KC_COMM, KC_DOT,  KC_SLSH, KC_BSLS,
+                             OK_QWE, _______,  _______, _______, _______, _______, _______, _______, _______, _______
+    ),
+    // [QWERTY] = LAYOUT(
+    //   KC_ESC,  KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,                                       KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
+    //   OK_TAB,  OK_A,   OK_S,   OK_D,   OK_F,   KC_G,                                       KC_H,    OK_J,    OK_K,    OK_L,    OK_SCLN, KC_QUOT,
+    //   KC_LSFT, KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,     KC_LSFT, KC_LSFT, KC_LSFT, KC_LSFT, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_BSLS,
+    //                          OK_COL, KC_DEL  , OK_ENNUM, OK_MOV,  OK_NUM,  OK_MOV, OK_NUM,  OK_SPMOV, KC_RCTL, _______
+    // ),
+    // [COLEMAK] = LAYOUT(
+    //   KC_ESC,  KC_Q,   KC_W,   KC_F,   KC_P,   KC_B,                                       KC_J,    KC_L,    KC_U,    KC_Y,    KC_QUOT, KC_BSPC,
+    //   OK_TAB,  CM_A,   CM_R,   CM_S,   CM_T,   KC_G,                                       KC_M,    CM_N,    CM_E,    CM_I,    CM_O,    KC_SCLN,
+    //   KC_LSFT, KC_Z,   KC_X,   KC_C,   KC_D,   KC_V,     KC_LSFT, KC_LSFT, KC_LSFT, KC_LSFT, KC_K,    KC_H,    KC_COMM, KC_DOT,  KC_SLSH, KC_BSLS,
+    //                          OK_QWE, KC_DEL  , OK_ENNUM, OK_MOV,  OK_NUM,  OK_MOV,  OK_NUM,  OK_SPMOV, KC_RCTL, _______
+    // ),
 /*
- * Numbers: numbers, specials-_  |  =+  |  [{  |  ]}
- *
+ * Numbers: numbers, specials
+ * keep ,. for easy typing of numbers and IPs, keep backspace
  * ,-------------------------------------------.                              ,-------------------------------------------.
- * |    ~   |  !   |  @   |  #   |  $   |  %   |                              |  ^   |  &   |  *   |  (   |  )   |  _     |
+ * |        |  !   |  @   |  #   |  $   |  %   |                              |  ^   |  &   |  *   |  (   |  )   |        |
  * |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
- * |    `   |  1   |  2   |  3   |  4   |  5   |                              |  6   |  7   |  8   |  9   |  0   |  -     |
+ * |        |  1   |  2   |  3   |  4   |  5   |                              |  6   |  7   |  8   |  9   |  0   |  -     |
  * |        |  ctrl|  gui | alt  | shift|      |                              |      | shift| alt  |  gui | ctrl |        |
  * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
- * | CAPS   |      |      |      |      | eur  |      |      |  |      |      |  [   |  ]   |  {   |  }   |  +   |  =     |
+ * |        |  ~   |  `   |  _   |  [   |  ]   |      |      |  |      |      |  {   |  }   |      |      |  +   |  =     |
  * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
- *                        |      |      |      |      |      |  |      |      |      |      |      |
+ *                        |      |      |      |      |      |  | del  | bspc |      |      |      |
  *                        |      |      |      |      |      |  |      |      |      |      |      |
  *                        `----------------------------------'  `----------------------------------'
  */
     [NUMBERS] = LAYOUT(
-      KC_TILD, KC_EXLM, KC_AT  , KC_HASH, KC_DLR , KC_PERC,                                        KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_UNDS,
-      KC_GRV,  OK_1,    OK_2,     OK_3,   OK_4,    KC_5,                                           KC_6,    OK_7,    OK_8,    OK_9,    OK_0,    KC_MINS,
-      KC_CAPS, _______, _______, _______, _______, ALGR(KC_5), _______, _______, _______, _______, KC_LBRC, KC_RBRC, KC_LCBR, KC_RCBR, KC_PLUS, KC_EQL,
-                                 _______, _______, _______,    _______, _______, _______, _______, _______, _______, _______
+      _______, KC_EXLM, KC_AT,  KC_HASH, KC_DLR , KC_PERC,                                     KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, _______,
+      _______, OK_1,    OK_2,   OK_3,    OK_4,    KC_5,                                        KC_6,    OK_7,    OK_8,    OK_9,    OK_0,    KC_MINS,
+      _______, KC_TILD, KC_GRV, KC_UNDS, KC_LBRC, KC_RBRC, _______, _______, _______, _______, KC_LCBR, KC_RCBR, _______, _______, KC_PLUS, KC_EQL,
+                                 _______, _______, _______, _______, _______, KC_DEL, KC_BSPC, _______, _______, _______
     ),
 /*
  * F-keys, navigation
@@ -116,8 +152,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * | VOL UP |  F1  |  F2  |  F3  |  F4  |      |                              | home | pgdn | pgup | end  |      | BRIU   |
  * |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
  * | VOL DN |  F5  |  F6  |  F7  |  F8  |      |                              | left | down | up   | right|      | BRID   |
+ * |        |  ctrl|  gui | alt  | shift|      |
  * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
- * | PL/PAUS|  F9  |  F10 |  F11 |  F12 |      |      |      |  |      |      | mous4|      |      | mous5|      | PSCR   |
+ * | PL/PAUS|  F9  |  F10 |  F11 |  F12 | CAPS |      |      |  |      |      | mous4|      |      | mous5|      | PSCR   |
  * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
  *                        |      |      |      |      |      |  |      |      |      |      |      |
  *                        |      |      |      |      |      |  |      |      |      |      |      |
@@ -125,10 +162,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * mous4 = back
  * mous5 = forward
  */
-    [F_MOVE] = LAYOUT(
+    [MOVE] = LAYOUT(
       KC_VOLU, KC_F1,   KC_F2,   KC_F3,   KC_F4,   _______,                                     KC_HOME, KC_PGDN, KC_PGUP, KC_END,  _______, KC_BRIU,
-      KC_VOLD, KC_F5,   KC_F6,   KC_F7,   KC_F8,   _______,                                     KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______, KC_BRID,
-      KC_MPLY, KC_F9,   KC_F10,  KC_F11,  KC_F12,  _______, _______, _______, _______, _______, KC_BTN4, _______, _______, KC_BTN5, _______, KC_PSCR,
+      KC_VOLD, OK_F5,   OK_F6,   OK_F7,   OK_F8,   _______,                                     KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______, KC_BRID,
+      KC_MPLY, KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_CAPS, _______, _______, _______, _______, KC_BTN4, _______, _______, KC_BTN5, _______, KC_PSCR,
                                  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
     ),
 };
@@ -250,18 +287,21 @@ void render_status_bar(void) {
 static void render_status(void) {
     // QMK Logo and version information
     render_qmk_logo();
-    oled_write_P(PSTR("       Kyria rev1.0\n\n"), false);
+    oled_write_P(PSTR("       Okke\n"), false);
 
     // Host Keyboard Layer Status
     oled_write_P(PSTR("Layer: "), false);
     switch (get_highest_layer(layer_state)) {
         case QWERTY:
-            oled_write_P(PSTR("default\n"), false);
+            oled_write_P(PSTR("qwerty\n"), false);
+            break;
+        case COLEMAK:
+            oled_write_P(PSTR("colemak\n"), false);
             break;
         case NUMBERS:
             oled_write_P(PSTR("numbers\n"), false);
             break;
-        case F_MOVE:
+        case MOVE:
             oled_write_P(PSTR("func-move\n"), false);
             break;
         // case NAV:
