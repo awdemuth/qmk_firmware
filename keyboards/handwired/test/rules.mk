@@ -33,5 +33,4 @@ FAUXCLICKY_ENABLE = no     # Use buzzer to emulate clicky switches
 HD44780_ENABLE = no        # Enable support for HD44780 based LCDs
 SPLIT_KEYBOARD = no       # Split
 LINK_TIME_OPTIMIZATION_ENABLE =yes
-CAPSENSE_ENABLE = yes
 SRC += capsense.c

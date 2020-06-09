@@ -1,121 +1,132 @@
 #include "capsense.h"
-#include <print.h>
+#include "timer.h"
+#include "print.h"
 
-// recalibrate_ms = 20000 * 1000; // set timeout really high so
+bool capsense_active = 0;
+uint32_t capsense_debounce_timer = 0;
+uint32_t capsense_calibration = 0;
 
-// uint32_t calibration_value = 0x0FFFFFFFL;   // input large value for autocalibrate begin
-// uint32_t lastCal = timer_read();         // set millis for start
+__attribute__((weak)) void capsense_update_user(bool active) {}
+
+__attribute__((weak)) void capsense_update_kb(bool active) { capsense_update_user(active); }
 
 void capsense_init(void) {
-    // set up pins
-    print("test");
-    setPinOutput(CAPSENSE_PIN_SEND);    // sendpin to OUTPUT
-    setPinInput(CAPSENSE_PIN_RECEIVE);  // receivePin to INPUT
+    // set up pins to sense up cycle
+    setPinOutput(CAPSENSE_PIN_SEND);
+    setPinInput(CAPSENSE_PIN_RECEIVE);
     writePinLow(CAPSENSE_PIN_SEND);
 
     // calibrate
-    // uint32_t total = 0;
-    // for (uint8_t i = 0; i < samples; i++) {    // loop for samples parameter - simple lowpass filter
-    //     uint32_t cycle_lenght = SenseOneCycle()
-    // 	if (cycle_length < 0)  return -2;   // variable over timeout
-    //     total = total + cycle_length
-    // }
-
-    // calibrate if time is greater than recalibrate_ms and new value differs less than 10% from previous value
-    // this is an attempt to keep from calibrating when the sensor is seeing a "touched" signal
-
-    // if ( (timer_elapsed32(lastCal) > recalibrate_ms) && abs(total  - calibration_value) < (int)(.10 * (float)leastTotal) ) {
-    //     leastTotal = 0x0FFFFFFFL;          // reset for "autocalibrate"
-    //     lastCal = timer_read();
-    // }
-    // // routine to subtract baseline (non-sensed capacitance) from sensor return
-    // if (total < leastTotal) leastTotal = total;                 // set floor value to subtract from sensed value
-    // return(total - leastTotal);
+    capsense_read_raw(); // throw out first reading, we have to prime the cycle
+    capsense_calibration = capsense_read_raw();
 }
 
 void capsense_read(void) {
-    // print("test");
+    uint32_t read = capsense_read_raw();
+    if(read < 0) {
+        //error
+        return;
+    }
+    int32_t diff = read - capsense_calibration;
+    if(diff > CAPSENSE_THRESHOLD) {
+        if(capsense_active) {
+            //reset debounce timer for 'inactive' state change
+            capsense_debounce_timer = 0;
+            return;
+        }
+        if(capsense_debounce_timer == 0) {
+            //set debounce timer for 'active' state change
+            capsense_debounce_timer = timer_read32();
+            return;
+        }
+        if(timer_elapsed32(capsense_debounce_timer) < CAPSENSE_DEBOUNCE) {
+            //wait a little longer
+            return;
+        }
+        capsense_active = true;
+        capsense_update_kb(capsense_active);
+#ifdef CAPSENSE_DEBUG
+        dprint("on: ");
+        dprintf("sensed %u ", read);
+        dprintf("calibration %u ", capsense_calibration);
+        dprintf("diff %d ", diff);
+        dprintf("threshold %u \n", CAPSENSE_THRESHOLD);
+#endif
+    } else {
+        if(!capsense_active) {
+            //reset debounce timer for 'active' state change
+            capsense_debounce_timer = 0;
+            return;
+        }
+        if(capsense_debounce_timer == 0) {
+            //set debounce timer for 'inactive' state change
+            capsense_debounce_timer = timer_read32();
+            return;
+        }
+        if(timer_elapsed32(capsense_debounce_timer) < CAPSENSE_DEBOUNCE) {
+            //wait a little longer
+            return;
+        }
+        capsense_active = false;
+        capsense_update_kb(capsense_active);
+#ifdef CAPSENSE_DEBUG
+        dprint("off: ");
+        dprintf("sensed %u ", read);
+        dprintf("calibration %u ", capsense_calibration);
+        dprintf("diff %d ", diff);
+        dprintf("threshold %u \n", CAPSENSE_THRESHOLD);
+#endif
+    }
+}
+
+uint32_t capsense_read_raw(void) {
     uint32_t total = 0;
     for (int i = 0; i < CAPSENSE_SAMPLES; i++) {  // loop for samples parameter - simple lowpass filter
         long cycle = capsense_read_one_cycle();
         if (cycle < 0) {
-            uprintf("cycle read %u\n", cycle);
-            return;
-            // return cycle;  // error
+            return cycle;
         }
         total = total + cycle;
     }
-    uprintf("capsense read %u\n", total);
-    // return total;
+    return total;
 }
 
-long capsense_read_one_cycle(void) {
-    long sense_iterations = 0;
+uint32_t capsense_read_one_cycle(void) {
+    uint32_t sense_iterations_up = 0;
+    uint32_t sense_iterations_down = 0;
+
     setPinInput(CAPSENSE_PIN_RECEIVE);
     writePinHigh(CAPSENSE_PIN_SEND);
 
     // while receive pin is LOW AND total is less than timeout
-    while (!readPin(CAPSENSE_PIN_RECEIVE) && (sense_iterations < CAPSENSE_MAX_ITERATIONS)) {
-        sense_iterations++;
+    while (!readPin(CAPSENSE_PIN_RECEIVE) && (sense_iterations_up < CAPSENSE_MAX_ITERATIONS)) {
+        sense_iterations_up++;
     }
 
-    // set receive pin HIGH briefly to charge up fully
+    // set receive pin HIGH briefly to charge up
     setPinOutput(CAPSENSE_PIN_RECEIVE);
     writePinHigh(CAPSENSE_PIN_RECEIVE);  // receive pin is now HIGH AND OUTPUT
     setPinInput(CAPSENSE_PIN_RECEIVE);   // receivePin to INPUT (pullup is off)
     writePinLow(CAPSENSE_PIN_SEND);      // sendPin LOW
 
     // while receive pin is HIGH  AND total is less than timeout
-    while (readPin(CAPSENSE_PIN_RECEIVE) && (sense_iterations < CAPSENSE_MAX_ITERATIONS)) {
-        sense_iterations++;
+    while (readPin(CAPSENSE_PIN_RECEIVE) && (sense_iterations_down < CAPSENSE_MAX_ITERATIONS)) {
+        sense_iterations_down++;
     }
 
-    // set receive pin LOW briefly to discharge fully and prepare for next cycle
+    // set receive pin LOW to discharge and prepare for next cycle
     writePinLow(CAPSENSE_PIN_RECEIVE);  // turn off input pullup
     setPinOutput(CAPSENSE_PIN_RECEIVE);
     writePinLow(CAPSENSE_PIN_RECEIVE);  // receive pin is now LOW and OUTPUT
-                                        // todo: wait until cap has discharged?
 
-    if (sense_iterations >= CAPSENSE_MAX_ITERATIONS) {
+#ifdef CAPSENSE_DEBUG
+    dprintf("capsense up %u ", sense_iterations_up);
+    dprintf("capsense down %u\n", sense_iterations_down);
+#endif
+
+    if((sense_iterations_up >= CAPSENSE_MAX_ITERATIONS) || (sense_iterations_down >= CAPSENSE_MAX_ITERATIONS)) {
+        // out of bounds value read, loose cable?
         return -1;
     }
-
-    return sense_iterations;
+    return sense_iterations_up + sense_iterations_down;
 }
-
-// int  led   = 12;
-// long time  = 0;
-// int  state = HIGH;
-
-// boolean shine;
-// boolean previous = false;
-
-// int debounce = 200;
-
-// CapacitiveSensor cs = CapacitiveSensor(4, 2);
-
-// void setup() {
-//     cs.set_CS_AutocaL_Millis(0xFFFFFFFF);
-//     pinMode(led, OUTPUT);
-// }
-
-// void loop() {
-//     long total = cs.capacitiveSensor(30);
-
-//     shine = (total > 60);
-
-//     // to toggle the state of state
-//     if ((millis() - time) > debounce) {
-//         if (shine)
-//             state = HIGH;
-//         else
-//             state = LOW;
-
-//         time = millis();
-//     }
-//     digitalWrite(led, state);
-//     previous = shine;
-
-//     Serial.println(millis() - time);
-//     delay(10);
-// }

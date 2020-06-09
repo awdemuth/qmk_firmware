@@ -1,35 +1,32 @@
-
 #pragma once
 
 #include "quantum.h"
-
 #include "config_common.h"
+#include "config.h"
+
 #ifndef CAPSENSE_PIN_SEND
-#    define CAPSENSE_PIN_SEND B2
+#    error "CAPSENSE_PIN_SEND must be set when using capsense"
 #endif
 #ifndef CAPSENSE_PIN_RECEIVE
-#    define CAPSENSE_PIN_RECEIVE B6
+#    error "CAPSENSE_PIN_RECEIVE must be set when using capsense"
 #endif
 #ifndef CAPSENSE_THRESHOLD
-#    define CAPSENSE_THRESHOLD 60
+#    define CAPSENSE_THRESHOLD 30
 #endif
 #ifndef CAPSENSE_SAMPLES
 #    define CAPSENSE_SAMPLES 3
 #endif
 #ifndef CAPSENSE_MAX_ITERATIONS
-#    define CAPSENSE_MAX_ITERATIONS 310 * 2000L  // approx 2s on 16mhz
+#    define CAPSENSE_MAX_ITERATIONS 500
+#endif
+#ifndef CAPSENSE_DEBOUNCE
+#    define CAPSENSE_DEBOUNCE 30  // millis
 #endif
 
-void capsense_init(void);
-void capsense_read(void);
-long capsense_read_one_cycle(void);
+void     capsense_init(void);
+void     capsense_read(void);
+uint32_t capsense_read_raw(void);
+uint32_t capsense_read_one_cycle(void);
 
-void capsense_update_kb(int8_t index, bool clockwise);
-void capsense_update_user(int8_t index, bool clockwise);
-
-// int           error;
-// unsigned long leastTotal;
-// unsigned int  loopTimingFactor;
-// unsigned long sense_max_iterations;
-// unsigned long CS_AutocaL_Millis;
-// unsigned long lastCal;
+void capsense_update_kb(bool active);
+void capsense_update_user(bool active);
