@@ -15,6 +15,14 @@
  */
 #include QMK_KEYBOARD_H
 
-enum layers { QWERTY = 0 };
+enum layers { DEBUGLAYER = 0, YES };
 
-const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {[QWERTY] = LAYOUT(DEBUG)};
+const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {[DEBUGLAYER] = LAYOUT(DEBUG), [YES] = LAYOUT(KC_Y)};
+
+void capsense_update_user(bool active) {
+    if (active) {
+        layer_on(YES);
+    } else {
+        layer_off(YES);
+    }
+}
