@@ -16,12 +16,8 @@
 #ifndef CAPSENSE_SAMPLES
 #    define CAPSENSE_SAMPLES 3
 #endif
-#ifndef CAPSENSE_CYCLES
-#    define CAPSENSE_CYCLES 1
-#endif
-
-#ifndef SENSE_MAX_ITERATIONS
-#    define SENSE_MAX_ITERATIONS 10  // 310 * 2000L  // approx 2s on 16mhz
+#ifndef CAPSENSE_MAX_ITERATIONS
+#    define CAPSENSE_MAX_ITERATIONS 310 * 2000L  // approx 2s on 16mhz
 #endif
 
 void capsense_init(void);

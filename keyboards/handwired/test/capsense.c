@@ -34,17 +34,18 @@ void capsense_init(void) {
 }
 
 void capsense_read(void) {
-    print("test");
+    // print("test");
     uint32_t total = 0;
     for (int i = 0; i < CAPSENSE_SAMPLES; i++) {  // loop for samples parameter - simple lowpass filter
         long cycle = capsense_read_one_cycle();
         if (cycle < 0) {
+            uprintf("cycle read %u\n", cycle);
             return;
             // return cycle;  // error
         }
         total = total + cycle;
     }
-    uprintf("capsense read", total);
+    uprintf("capsense read %u\n", total);
     // return total;
 }
 
@@ -54,7 +55,7 @@ long capsense_read_one_cycle(void) {
     writePinHigh(CAPSENSE_PIN_SEND);
 
     // while receive pin is LOW AND total is less than timeout
-    while (!readPin(CAPSENSE_PIN_RECEIVE) && (sense_iterations < SENSE_MAX_ITERATIONS)) {
+    while (!readPin(CAPSENSE_PIN_RECEIVE) && (sense_iterations < CAPSENSE_MAX_ITERATIONS)) {
         sense_iterations++;
     }
 
@@ -65,7 +66,7 @@ long capsense_read_one_cycle(void) {
     writePinLow(CAPSENSE_PIN_SEND);      // sendPin LOW
 
     // while receive pin is HIGH  AND total is less than timeout
-    while (readPin(CAPSENSE_PIN_RECEIVE) && (sense_iterations < SENSE_MAX_ITERATIONS)) {
+    while (readPin(CAPSENSE_PIN_RECEIVE) && (sense_iterations < CAPSENSE_MAX_ITERATIONS)) {
         sense_iterations++;
     }
 
@@ -75,7 +76,7 @@ long capsense_read_one_cycle(void) {
     writePinLow(CAPSENSE_PIN_RECEIVE);  // receive pin is now LOW and OUTPUT
                                         // todo: wait until cap has discharged?
 
-    if (sense_iterations >= SENSE_MAX_ITERATIONS) {
+    if (sense_iterations >= CAPSENSE_MAX_ITERATIONS) {
         return -1;
     }
 
