@@ -50,10 +50,6 @@ extern backlight_config_t backlight_config;
 #    include "encoder.h"
 #endif
 
-#ifdef CAPSENSE_ENABLE
-#    include "capsense.h"
-#endif
-
 #ifdef AUDIO_ENABLE
 #    ifndef GOODBYE_SONG
 #        define GOODBYE_SONG SONG(GOODBYE_SOUND)
@@ -638,9 +634,7 @@ void matrix_init_quantum() {
 #ifdef DIP_SWITCH_ENABLE
     dip_switch_init();
 #endif
-#ifdef CAPSENSE_ENABLE
-    capsense_init();
-#endif
+
     matrix_init_kb();
 }
 
@@ -667,10 +661,6 @@ void matrix_scan_quantum() {
 
 #ifdef ENCODER_ENABLE
     encoder_read();
-#endif
-
-#ifdef CAPSENSE_ENABLE
-    capsense_read();
 #endif
 
 #ifdef WPM_ENABLE

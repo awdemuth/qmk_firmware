@@ -14,3 +14,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "test.h"
+#include "quantum.h"
+#include "capsense.h"
+
+void matrix_init_kb(void) {
+    capsense_init();
+    matrix_init_user();
+}
+
+void matrix_scan_kb(void) {
+    capsense_read();
+    matrix_scan_user();
+}
