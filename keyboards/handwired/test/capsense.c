@@ -2,9 +2,9 @@
 #include "timer.h"
 #include "print.h"
 
-bool capsense_active = 0;
+bool     capsense_active         = 0;
 uint32_t capsense_debounce_timer = 0;
-uint32_t capsense_calibration = 0;
+uint32_t capsense_calibration    = 0;
 
 __attribute__((weak)) void capsense_update_user(bool active) {}
 
@@ -17,30 +17,30 @@ void capsense_init(void) {
     writePinLow(CAPSENSE_PIN_SEND);
 
     // calibrate
-    capsense_read_raw(); // throw out first reading, we have to prime the cycle
+    capsense_read_raw();  // throw out first reading, we have to prime the cycle
     capsense_calibration = capsense_read_raw();
 }
 
 void capsense_read(void) {
     uint32_t read = capsense_read_raw();
-    if(read < 0) {
-        //error
+    if (read < 0) {
+        // error
         return;
     }
     int32_t diff = read - capsense_calibration;
-    if(diff > CAPSENSE_THRESHOLD) {
-        if(capsense_active) {
-            //reset debounce timer for 'inactive' state change
+    if (diff > CAPSENSE_THRESHOLD) {
+        if (capsense_active) {
+            // reset debounce timer for 'inactive' state change
             capsense_debounce_timer = 0;
             return;
         }
-        if(capsense_debounce_timer == 0) {
-            //set debounce timer for 'active' state change
+        if (capsense_debounce_timer == 0) {
+            // set debounce timer for 'active' state change
             capsense_debounce_timer = timer_read32();
             return;
         }
-        if(timer_elapsed32(capsense_debounce_timer) < CAPSENSE_DEBOUNCE) {
-            //wait a little longer
+        if (timer_elapsed32(capsense_debounce_timer) < CAPSENSE_DEBOUNCE) {
+            // wait a little longer
             return;
         }
         capsense_active = true;
@@ -53,18 +53,18 @@ void capsense_read(void) {
         dprintf("threshold %u \n", CAPSENSE_THRESHOLD);
 #endif
     } else {
-        if(!capsense_active) {
-            //reset debounce timer for 'active' state change
+        if (!capsense_active) {
+            // reset debounce timer for 'active' state change
             capsense_debounce_timer = 0;
             return;
         }
-        if(capsense_debounce_timer == 0) {
-            //set debounce timer for 'inactive' state change
+        if (capsense_debounce_timer == 0) {
+            // set debounce timer for 'inactive' state change
             capsense_debounce_timer = timer_read32();
             return;
         }
-        if(timer_elapsed32(capsense_debounce_timer) < CAPSENSE_DEBOUNCE) {
-            //wait a little longer
+        if (timer_elapsed32(capsense_debounce_timer) < CAPSENSE_DEBOUNCE) {
+            // wait a little longer
             return;
         }
         capsense_active = false;
@@ -92,7 +92,7 @@ uint32_t capsense_read_raw(void) {
 }
 
 uint32_t capsense_read_one_cycle(void) {
-    uint32_t sense_iterations_up = 0;
+    uint32_t sense_iterations_up   = 0;
     uint32_t sense_iterations_down = 0;
 
     setPinInput(CAPSENSE_PIN_RECEIVE);
@@ -120,11 +120,11 @@ uint32_t capsense_read_one_cycle(void) {
     writePinLow(CAPSENSE_PIN_RECEIVE);  // receive pin is now LOW and OUTPUT
 
 #ifdef CAPSENSE_DEBUG
-    dprintf("capsense up %u ", sense_iterations_up);
-    dprintf("capsense down %u\n", sense_iterations_down);
+    // dprintf("capsense up %u ", sense_iterations_up);
+    // dprintf("capsense down %u\n", sense_iterations_down);
 #endif
 
-    if((sense_iterations_up >= CAPSENSE_MAX_ITERATIONS) || (sense_iterations_down >= CAPSENSE_MAX_ITERATIONS)) {
+    if ((sense_iterations_up >= CAPSENSE_MAX_ITERATIONS) || (sense_iterations_down >= CAPSENSE_MAX_ITERATIONS)) {
         // out of bounds value read, loose cable?
         return -1;
     }
