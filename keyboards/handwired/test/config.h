@@ -24,7 +24,7 @@
 
 #define CAPSENSE_PIN_SEND B2
 #define CAPSENSE_PIN_RECEIVE B6
-//#define CAPSENSE_DEBUG
+#define CAPSENSE_DEBUG
 
 // wiring
 #define MATRIX_ROW_PINS \
@@ -40,3 +40,65 @@
 #define DEBOUNCE 5
 
 #define DEBUG_MATRIX_SCAN_RATE
+
+/* ps2 mouse */
+#ifdef PS2_USE_BUSYWAIT
+#    define PS2_CLOCK_PORT PORTD
+#    define PS2_CLOCK_PIN PIND
+#    define PS2_CLOCK_DDR DDRD
+#    define PS2_CLOCK_BIT 3
+#    define PS2_DATA_PORT PORTC
+#    define PS2_DATA_PIN PINC
+#    define PS2_DATA_DDR DDRC
+#    define PS2_DATA_BIT 6
+#endif
+
+
+#ifdef PS2_USE_INT
+#define PS2_CLOCK_PORT  PORTD
+#define PS2_CLOCK_PIN   PIND
+#define PS2_CLOCK_DDR   DDRD
+#define PS2_CLOCK_BIT   3
+#define PS2_DATA_PORT   PORTC
+#define PS2_DATA_PIN    PINC
+#define PS2_DATA_DDR    DDRC
+#define PS2_DATA_BIT    6
+
+#define PS2_INT_INIT()  do {    \
+    EICRA |= ((1<<ISC30) |      \
+              (0<<ISC21));      \
+} while (0)
+#define PS2_INT_ON()  do {      \
+    EIMSK |= (1<<INT3);         \
+} while (0)
+#define PS2_INT_OFF() do {      \
+    EIMSK &= ~(1<<INT3);        \
+} while (0)
+#define PS2_INT_VECT   INT3_vect
+#endif
+/*
+#ifdef PS2_USE_INT
+#    define PS2_CLOCK_PORT PORTB
+#    define PS2_CLOCK_PIN PINB
+#    define PS2_CLOCK_DDR DDRB
+#    define PS2_CLOCK_BIT 5
+#    define PS2_DATA_PORT PORTB
+#    define PS2_DATA_PIN PINB
+#    define PS2_DATA_DDR DDRB
+#    define PS2_DATA_BIT 4
+
+#    define PS2_INT_INIT()                          \
+        do {                                        \
+            EICRA |= ((1 << ISC21) | (0 << ISC20)); \
+        } while (0)
+#    define PS2_INT_ON()          \
+        do {                      \
+            EIMSK |= (1 << INT2); \
+        } while (0)
+#    define PS2_INT_OFF()          \
+        do {                       \
+            EIMSK &= ~(1 << INT2); \
+        } while (0)
+#    define PS2_INT_VECT INT2_vect
+#endif
+*/
