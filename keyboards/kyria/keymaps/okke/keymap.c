@@ -21,6 +21,7 @@ uint16_t copy_paste_timer;
 enum layers {
     QWERTY = 0,
     COLEMAK,
+    I3,
     NUMBERS,
     MOVE
 };
@@ -37,6 +38,8 @@ enum custom_keycodes {
 #define OK_K    MT(MOD_RALT, KC_K)
 #define OK_L    MT(MOD_RGUI, KC_L)
 #define OK_SCLN    MT(MOD_RCTL, KC_SCLN)
+#define OK_V    LT(I3, KC_V)
+#define OK_M    LT(I3, KC_M)
 
 
 #define CM_A    MT(MOD_LCTL, KC_A)
@@ -47,6 +50,9 @@ enum custom_keycodes {
 #define CM_E    MT(MOD_LALT, KC_E)
 #define CM_I    MT(MOD_LGUI, KC_I)
 #define CM_O    MT(MOD_LCTL, KC_O)
+#define CM_D    LT(I3, KC_D)
+#define CM_H    LT(I3, KC_H)
+
 
 #define OK_GRV  MT(MOD_LCTL, KC_GRV)
 #define OK_1    MT(MOD_LCTL, KC_1)
@@ -63,67 +69,47 @@ enum custom_keycodes {
 #define OK_F7   MT(MOD_LALT, KC_F7)
 #define OK_F8   MT(MOD_LSFT, KC_F8)
 
-#define OK_ESC MT(MOD_LCTL, KC_ESC)
-#define OK_TAB MT(MOD_LCTL, KC_TAB)
-// #define OK_GENT MT(MOD_LGUI, KC_ENT) /* gui enter */
-// #define OK_SPNUM LT(NUMBERS, KC_SPC) /* space numbers */
-// #define OK_BKFM LT(MOVE, KC_BSPC) /* backspace f-move */
-// #define OK_DLFM LT(MOVE, KC_DEL) /* del f-move */
-// #define OK_AENT MT(MOD_RALT, KC_ENT) /* alt enter */
-#define OK_ENNUM LT(NUMBERS, KC_ENT) /* enter numbers */
-#define OK_SPMOV LT(MOVE, KC_SPC) /* space numbers */
-#define OK_NUM MO(NUMBERS)
-#define OK_MOV MO(MOVE)
 #define OK_QWE TO(QWERTY)
 #define OK_COL TO(COLEMAK)
 
-#define TAB_MOV LT(MOVE, KC_TAB)
-#define SP_NUM LT(NUMBERS, KC_SPC)
-#define EN_MOV LT(MOVE, KC_ENT)
-#define DEL_MOV LT(MOVE, KC_DEL)
-#define BSP_NUM LT(NUMBERS, KC_BSPC)
-#define ESC_MOV LT(MOVE, KC_ESC)
+// THUMB KEYS
+#define OK_TAB LT(NUMBERS, KC_TAB)
+#define OK_SPC LT(NUMBERS, KC_SPC)
+#define OK_ENT LT(MOVE, KC_ENT)
+#define OK_BSPC LT(MOVE, KC_BSPC)
+#define OK_SHFT OSM(MOD_LSFT)
+#define OK_DEL LT(NUMBERS, KC_DEL)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /*
- * Base Layer: QWERTY
+ * Base Layer: QWERTY/COLEMAK
  *
  * ,-------------------------------------------.                              ,-------------------------------------------.
- * | esc    |   Q  |   W  |   E  |   R  |   T  |                              |   Y  |   U  |   I  |   O  |   P  |  Bspc  |
+ * | esc    |   Q  |   W  |   E  |   R  |   T  |                              |   Y  |   U  |   I  |   O  |   P  |        |
  * |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
- * | tab    |   A  |   S  |  D   |   F  |   G  |                              |   H  |   J  |   K  |   L  | ;  : |  ' "   |
- * | ctrl   |  ctrl|  gui | alt  | shift|      |                              |      | shift| alt  |  gui | ctrl |        |
+ * |        |   A  |   S  |  D   |   F  |   G  |                              |   H  |   J  |   K  |   L  | ;  : |  ' "   |
+ * |        |  ctrl|  gui | alt  | shift|      |                              |      | shift| alt  |  gui | ctrl |        |
  * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
- * | shift  |   Z  |   X  |   C  |   V  |   B  |      |      |  |      |      |   N  |   M  | ,  < | . >  | /  ? |  \ |   |
+ * |        |   Z  |   X  |   C  |   V  |   B  |      |      |  |      |      |   N  |   M  | ,  < | . >  | /  ? |  \ |   |
+ * |        |      |      |      |   i3 |      |             .  ,             |      |  i3  |      |      |      |        |
  * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
- *                        | COLE |      | tab  | spc  | ent  |  | del  | bspc | esc  |      |      |
- *                        | QWER |      | move | numb | move |  | move | numb | move |      |      |
+ *                        | COLE |      | tab  | spc  | ent  |  | bspc | shft | del  |      |      |
+ *                        | QWER |      | numb | numb | move |  | move |      | numb |      |      |
  *                        `------`----------------------------  ----------------------------'------'
  */
     [QWERTY] = LAYOUT(
-      KC_ESC,  KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,                                       KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
-      OK_TAB,  OK_A,   OK_S,   OK_D,   OK_F,   KC_G,                                       KC_H,    OK_J,    OK_K,    OK_L,    OK_SCLN, KC_QUOT,
-      KC_LSFT, KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,   KC_LSFT, KC_LSFT, KC_LSFT, KC_LSFT, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_BSLS,
-                             OK_COL,   KC_NO,  OK_TAB, SP_NUM,  EN_MOV,  DEL_MOV, BSP_NUM, KC_ESC,  KC_NO, KC_NO
+      KC_ESC,  KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,                                       KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    _______,
+      KC_ESC,  OK_A,   OK_S,   OK_D,   OK_F,   KC_G,                                       KC_H,    OK_J,    OK_K,    OK_L,    OK_SCLN, KC_QUOT,
+      _______, KC_Z,   KC_X,   KC_C,   OK_V,   KC_B,   _______, _______, _______, _______, KC_N,    OK_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_BSLS,
+                             OK_COL,   KC_NO,  OK_TAB, OK_SPC,  OK_ENT,  OK_BSPC, OK_SHFT, OK_DEL,  KC_NO, KC_NO
     ),
     [COLEMAK] = LAYOUT(
-      KC_ESC,  KC_Q,   KC_W,   KC_F,   KC_P,   KC_B,                                       KC_J,    KC_L,    KC_U,    KC_Y,    KC_QUOT, KC_BSPC,
-      OK_TAB,  CM_A,   CM_R,   CM_S,   CM_T,   KC_G,                                       KC_M,    CM_N,    CM_E,    CM_I,    CM_O,    KC_SCLN,
-      KC_LSFT, KC_Z,   KC_X,   KC_C,   KC_D,   KC_V,   KC_LSFT, KC_LSFT, KC_LSFT, KC_LSFT, KC_K,    KC_H,    KC_COMM, KC_DOT,  KC_SLSH, KC_BSLS,
-                             OK_QWE, _______,  _______, _______, _______, _______, _______, _______, _______, _______
+      _______, KC_Q,   KC_W,   KC_F,   KC_P,   KC_B,                                       KC_J,    KC_L,    KC_U,    KC_Y,    KC_QUOT, _______,
+      _______, CM_A,   CM_R,   CM_S,   CM_T,   KC_G,                                       KC_M,    CM_N,    CM_E,    CM_I,    CM_O,    KC_SCLN,
+      _______, KC_Z,   KC_X,   KC_C,   CM_D,   KC_V,   _______, _______, _______, _______, KC_K,    CM_H,    KC_COMM, KC_DOT,  KC_SLSH, KC_BSLS,
+                             OK_QWE, _______, _______, _______, _______, _______, _______, _______, _______, _______
     ),
-    // [QWERTY] = LAYOUT(
-    //   KC_ESC,  KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,                                       KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
-    //   OK_TAB,  OK_A,   OK_S,   OK_D,   OK_F,   KC_G,                                       KC_H,    OK_J,    OK_K,    OK_L,    OK_SCLN, KC_QUOT,
-    //   KC_LSFT, KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,     KC_LSFT, KC_LSFT, KC_LSFT, KC_LSFT, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_BSLS,
-    //                          OK_COL, KC_DEL  , OK_ENNUM, OK_MOV,  OK_NUM,  OK_MOV, OK_NUM,  OK_SPMOV, KC_RCTL, _______
-    // ),
-    // [COLEMAK] = LAYOUT(
-    //   KC_ESC,  KC_Q,   KC_W,   KC_F,   KC_P,   KC_B,                                       KC_J,    KC_L,    KC_U,    KC_Y,    KC_QUOT, KC_BSPC,
-    //   OK_TAB,  CM_A,   CM_R,   CM_S,   CM_T,   KC_G,                                       KC_M,    CM_N,    CM_E,    CM_I,    CM_O,    KC_SCLN,
-    //   KC_LSFT, KC_Z,   KC_X,   KC_C,   KC_D,   KC_V,     KC_LSFT, KC_LSFT, KC_LSFT, KC_LSFT, KC_K,    KC_H,    KC_COMM, KC_DOT,  KC_SLSH, KC_BSLS,
-    //                          OK_QWE, KC_DEL  , OK_ENNUM, OK_MOV,  OK_NUM,  OK_MOV,  OK_NUM,  OK_SPMOV, KC_RCTL, _______
-    // ),
+
 /*
  * Numbers: numbers, specials
  * keep ,. for easy typing of numbers and IPs, keep backspace
@@ -133,9 +119,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |        |  1   |  2   |  3   |  4   |  5   |                              |  6   |  7   |  8   |  9   |  0   |  -     |
  * |        |  ctrl|  gui | alt  | shift|      |                              |      | shift| alt  |  gui | ctrl |        |
  * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
- * |        |  ~   |  `   |  _   |  [   |  ]   |      |      |  |      |      |  {   |  }   |      |      |  +   |  =     |
+ * |        |  ~   |  `   |  _   |  [   |  ]   |      |      |  |      |      |  {   |  }   |  ,   |  .   |  +   |  =     |
  * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
- *                        |      |      |      |      |      |  | del  | bspc |      |      |      |
+ *                        |      |      | tab  | spc  | ent  |  | bspc | shft | del  |      |      |
  *                        |      |      |      |      |      |  |      |      |      |      |      |
  *                        `----------------------------------'  `----------------------------------'
  */
@@ -143,7 +129,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       _______, KC_EXLM, KC_AT,  KC_HASH, KC_DLR , KC_PERC,                                     KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, _______,
       _______, OK_1,    OK_2,   OK_3,    OK_4,    KC_5,                                        KC_6,    OK_7,    OK_8,    OK_9,    OK_0,    KC_MINS,
       _______, KC_TILD, KC_GRV, KC_UNDS, KC_LBRC, KC_RBRC, _______, _______, _______, _______, KC_LCBR, KC_RCBR, _______, _______, KC_PLUS, KC_EQL,
-                                 _______, _______, _______, _______, _______, KC_DEL, KC_BSPC, _______, _______, _______
+                                _______, _______, _______, _______, _______,  KC_DEL, KC_BSPC, _______, _______, _______
+    ),
+/* i3 hotkeys - top row carries windows to workspace, home row navigates to workspace.*/
+    [I3] = LAYOUT(
+      _______, G(A(KC_1)), G(A(KC_2)), G(A(KC_3)), G(A(KC_4)), G(A(KC_5)),       G(A(KC_6)), G(A(KC_7)), G(A(KC_8)), G(A(KC_9)), G(A(KC_0)), _______,
+      _______, G(KC_1), G(KC_2), G(KC_3), G(KC_4), G(KC_5),                                      G(KC_6), G(KC_7), G(KC_8), G(KC_9), G(KC_0), _______,
+      _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+                                 _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
     ),
 /*
  * F-keys, navigation
@@ -156,7 +149,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
  * | PL/PAUS|  F9  |  F10 |  F11 |  F12 | CAPS |      |      |  |      |      | mous4|      |      | mous5|      | PSCR   |
  * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
- *                        |      |      |      |      |      |  |      |      |      |      |      |
+ *                        |      |      | tab  | spc  | ent  |  | bspc | shft | del  |      |      |
  *                        |      |      |      |      |      |  |      |      |      |      |      |
  *                        `----------------------------------'  `----------------------------------'
  * mous4 = back
@@ -170,69 +163,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 };
 
-// layer_state_t layer_state_set_user(layer_state_t state) {
-//     return update_tri_layer_state(state, LOWER, RAISE, ADJUST);
-// }
 
-// bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-//     switch (keycode) {
-//         case KC_CCCV:  // One key copy/paste
-//             if (record->event.pressed) {
-//                 copy_paste_timer = timer_read();
-//             } else {
-//                 if (timer_elapsed(copy_paste_timer) > TAPPING_TERM) {  // Hold, copy
-//                     tap_code16(LCTL(KC_C));
-//                 } else { // Tap, paste
-//                     tap_code16(LCTL(KC_V));
-//                 }
-//             }
-//             break;
-//     }
-//     return true;
-// }
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case CM_A:
+        case CM_O:
+        //case OK_A: //same as CM_A
+        case OK_SCLN:
+            return 100;
+        case LT(1, KC_GRV):
+            return 130;
+        default:
+            return TAPPING_TERM;
+    }
+}
 
-// LEADER_EXTERNS();
-
-// void matrix_scan_user(void) {
-//     LEADER_DICTIONARY() {
-//         leading = false;
-//         leader_end();
-
-//         SEQ_ONE_KEY(KC_C) { // Inline Code
-//             SEND_STRING("`` " SS_TAP(X_LEFT) SS_TAP(X_LEFT));
-//         }
-//         SEQ_ONE_KEY(KC_P) { // Invoke Password Manager
-//             SEND_STRING(SS_LCTRL(SS_LALT("\\")));
-//         }
-//         SEQ_ONE_KEY(KC_S) { // Windows screenshot
-//             SEND_STRING(SS_LGUI("\nS"));
-//         }
-//         SEQ_TWO_KEYS(KC_F, KC_P) { // Fusion Projection prefix
-//             SEND_STRING("[Projection] ");
-//         }
-//         SEQ_TWO_KEYS(KC_E, KC_S) { // Email splitkb
-//             SEND_STRING("thomas@splitkb.com");
-//         }
-//         SEQ_TWO_KEYS(KC_E, KC_P) { // Email personal
-//             SEND_STRING("mail@thomasbaart.nl");
-//         }
-//         SEQ_TWO_KEYS(KC_S, KC_D) { // Splitkb documentation
-//             SEND_STRING("https://docs.splitkb.com/");
-//         }
-//         SEQ_TWO_KEYS(KC_S, KC_V) { // Splitkb VAT number
-//             SEND_STRING("NL210593349B01");
-//         }
-//         SEQ_THREE_KEYS(KC_S, KC_D, KC_K) { // Splitkb Kyria build log
-//             SEND_STRING("https://docs.splitkb.com/docs/kyria-build-log/");
-//         }
-//         SEQ_TWO_KEYS(KC_B, KC_C) { // Discord bongocat
-//             SEND_STRING(":bongocat:\n");
-//         }
-//         SEQ_TWO_KEYS(KC_C, KC_B) { // Discord code block
-//             SEND_STRING("```c" SS_LSFT("\n\n") "``` " SS_TAP(X_UP));
-//         }
-//     }
-// }
 
 #ifdef OLED_DRIVER_ENABLE
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
@@ -304,14 +249,11 @@ static void render_status(void) {
         case MOVE:
             oled_write_P(PSTR("func-move\n"), false);
             break;
-        // case NAV:
-        //     oled_write_P(PSTR("Navigation\n"), false);
-        //     break;
-        // case ADJUST:
-        //     oled_write_P(PSTR("Adjust\n"), false);
-        //     break;
+        case I3:
+            oled_write_P(PSTR("i3\n"), false);
+            break;
         default:
-            oled_write_P(PSTR("something else\n"), false);
+            oled_write_P(PSTR("whut?\n"), false);
     }
 
     // Host Keyboard LED Status
